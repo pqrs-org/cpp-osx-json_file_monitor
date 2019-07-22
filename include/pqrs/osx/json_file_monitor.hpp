@@ -1,6 +1,6 @@
 #pragma once
 
-// pqrs::osx::json_file_monitor v0.0
+// pqrs::osx::json_file_monitor v1.0
 
 // (C) Copyright Takayama Fumihiko 2019.
 // Distributed under the Boost Software License, Version 1.0.
