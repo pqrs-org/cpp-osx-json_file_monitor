@@ -3,7 +3,7 @@
 
 # cpp-osx-json_file_monitor
 
-A wrapper class of File System Events API.
+An extension of pqrs::osx::file_monitor for json.
 
 ## Requirements
 
