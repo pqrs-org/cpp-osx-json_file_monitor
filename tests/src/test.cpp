@@ -50,13 +50,13 @@ TEST_CASE("json_file_monitor") {
     REQUIRE(last_json_error_file_path.empty());
     REQUIRE(last_json_error_message.empty());
 
-    system("echo '[1,' > tmp/example.json");
+    system("echo '[1' > tmp/example.json");
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     REQUIRE(last_json);
     REQUIRE(*last_json == nlohmann::json::array({1, 2, 3}));
     REQUIRE(last_json_error_file_path == "tmp/example.json");
-    REQUIRE(last_json_error_message == "[json.exception.parse_error.101] parse error at line 2, column 1: syntax error while parsing value - unexpected end of input; expected '[', '{', or a literal");
+    REQUIRE(last_json_error_message == "[json.exception.parse_error.101] parse error at line 2, column 1: syntax error while parsing array - unexpected end of input; expected ']'");
 
     system("rm tmp/example.json");
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
