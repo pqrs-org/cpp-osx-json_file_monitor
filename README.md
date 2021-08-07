@@ -1,5 +1,5 @@
 [![Build Status](https://github.com/pqrs-org/cpp-osx-json_file_monitor/workflows/CI/badge.svg)](https://github.com/pqrs-org/cpp-osx-json_file_monitor/actions)
-[![License](https://img.shields.io/badge/license-Boost%20Software%20License-blue.svg)](https://github.com/pqrs-org/cpp-osx-json_file_monitor/blob/master/LICENSE.md)
+[![License](https://img.shields.io/badge/license-Boost%20Software%20License-blue.svg)](https://github.com/pqrs-org/cpp-osx-json_file_monitor/blob/main/LICENSE.md)
 
 # cpp-osx-json_file_monitor
 
