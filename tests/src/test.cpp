@@ -1,71 +1,76 @@
-#define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
-
+#include <boost/ut.hpp>
 #include <pqrs/osx/json_file_monitor.hpp>
 
-TEST_CASE("json_file_monitor") {
-  using namespace std::string_literals;
+int main(void) {
+  using namespace boost::ut;
+  using namespace boost::ut::literals;
 
-  auto time_source = std::make_shared<pqrs::dispatcher::hardware_time_source>();
-  auto dispatcher = std::make_shared<pqrs::dispatcher::dispatcher>(time_source);
+  "json_file_monitor"_test = [] {
+    using namespace std::string_literals;
 
-  {
-    std::shared_ptr<nlohmann::json> last_json;
-    std::string last_json_error_file_path;
-    std::string last_json_error_message;
+    auto time_source = std::make_shared<pqrs::dispatcher::hardware_time_source>();
+    auto dispatcher = std::make_shared<pqrs::dispatcher::dispatcher>(time_source);
 
-    std::cout << "." << std::flush;
+    {
+      std::shared_ptr<nlohmann::json> last_json;
+      std::string last_json_error_file_path;
+      std::string last_json_error_message;
 
-    system("mkdir -p tmp");
-    system("echo '{}' > tmp/example.json");
+      std::cout << "." << std::flush;
 
-    std::vector<std::string> files{"tmp/example.json"};
+      system("mkdir -p tmp");
+      system("echo '{}' > tmp/example.json");
 
-    auto json_file_monitor = std::make_shared<pqrs::osx::json_file_monitor>(dispatcher,
-                                                                            files);
+      std::vector<std::string> files{"tmp/example.json"};
 
-    json_file_monitor->json_file_changed.connect([&](auto&& changed_file_path, auto&& json) {
-      last_json = json;
-    });
+      auto json_file_monitor = std::make_shared<pqrs::osx::json_file_monitor>(dispatcher,
+                                                                              files);
 
-    json_file_monitor->json_error_occurred.connect([&](auto&& file_path, auto&& message) {
-      last_json_error_file_path = file_path;
-      last_json_error_message = message;
-    });
+      json_file_monitor->json_file_changed.connect([&](auto&& changed_file_path, auto&& json) {
+        last_json = json;
+      });
 
-    json_file_monitor->async_start();
+      json_file_monitor->json_error_occurred.connect([&](auto&& file_path, auto&& message) {
+        last_json_error_file_path = file_path;
+        last_json_error_message = message;
+      });
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      json_file_monitor->async_start();
 
-    REQUIRE(last_json);
-    REQUIRE(*last_json == nlohmann::json::object());
-    REQUIRE(last_json_error_file_path.empty());
-    REQUIRE(last_json_error_message.empty());
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    system("echo '[1,2,3]' > tmp/example.json");
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      expect(last_json.get() != nullptr);
+      expect(*last_json == nlohmann::json::object());
+      expect(last_json_error_file_path.empty());
+      expect(last_json_error_message.empty());
 
-    REQUIRE(last_json);
-    REQUIRE(*last_json == nlohmann::json::array({1, 2, 3}));
-    REQUIRE(last_json_error_file_path.empty());
-    REQUIRE(last_json_error_message.empty());
+      system("echo '[1,2,3]' > tmp/example.json");
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    system("echo '[1' > tmp/example.json");
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      expect(last_json.get() != nullptr);
+      expect(*last_json == nlohmann::json::array({1, 2, 3}));
+      expect(last_json_error_file_path.empty());
+      expect(last_json_error_message.empty());
 
-    REQUIRE(last_json);
-    REQUIRE(*last_json == nlohmann::json::array({1, 2, 3}));
-    REQUIRE(last_json_error_file_path == "tmp/example.json");
-    REQUIRE(last_json_error_message == "[json.exception.parse_error.101] parse error at line 2, column 1: syntax error while parsing array - unexpected end of input; expected ']'");
+      system("echo '[1' > tmp/example.json");
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    system("rm tmp/example.json");
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      expect(last_json.get() != nullptr);
+      expect(*last_json == nlohmann::json::array({1, 2, 3}));
+      expect(last_json_error_file_path == "tmp/example.json");
+      expect(last_json_error_message == "[json.exception.parse_error.101] parse error at line 2, column 1: syntax error while parsing array - unexpected end of input; expected ']'");
 
-    REQUIRE(!last_json);
-  }
+      system("rm tmp/example.json");
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-  dispatcher->terminate();
-  dispatcher = nullptr;
+      expect(last_json.get() == nullptr);
+    }
 
-  std::cout << std::endl;
+    dispatcher->terminate();
+    dispatcher = nullptr;
+
+    std::cout << std::endl;
+  };
+
+  return 0;
 }
