@@ -35,7 +35,7 @@ public:
               nlohmann::json::parse(std::begin(*changed_file_body),
                                     std::end(*changed_file_body)));
         } catch (std::exception& e) {
-          auto message = e.what();
+          std::string message(e.what());
           enqueue_to_dispatcher([this, changed_file_path, message] {
             json_error_occurred(changed_file_path, message);
           });
