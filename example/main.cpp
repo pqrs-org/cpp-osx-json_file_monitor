@@ -2,7 +2,7 @@
 #include <iostream>
 #include <pqrs/osx/json_file_monitor.hpp>
 
-int main(void) {
+int main() {
   auto time_source = std::make_shared<pqrs::dispatcher::hardware_time_source>();
   auto dispatcher = std::make_shared<pqrs::dispatcher::dispatcher>(time_source);
 
