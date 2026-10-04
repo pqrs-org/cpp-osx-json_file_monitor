@@ -25,11 +25,12 @@ public:
   // Methods
 
   json_file_monitor(std::weak_ptr<dispatcher::dispatcher> weak_dispatcher,
-                    const std::vector<std::string>& files) : dispatcher_client(weak_dispatcher) {
+                    const file_monitor::parameters& parameters)
+      : dispatcher_client(weak_dispatcher) {
     dispatcher_client_constructor_exception_guard_.initialize(
         [&] {
           file_monitor_ = std::make_unique<file_monitor>(weak_dispatcher,
-                                                         files);
+                                                         parameters);
 
           file_monitor_->file_changed.connect([this](auto&& changed_file_path, auto&& changed_file_body) {
             std::shared_ptr<nlohmann::json> json;

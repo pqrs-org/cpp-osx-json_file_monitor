@@ -36,10 +36,12 @@ int main() {
       expect(std::system("mkdir -p tmp") == 0);
       expect(std::system("echo '[1,2,3]' > tmp/example.json") == 0);
 
-      std::vector<std::string> files{file_path_string};
+      pqrs::osx::file_monitor::parameters parameters{
+          .files = {file_path_string},
+      };
 
       auto json_file_monitor = std::make_shared<pqrs::osx::json_file_monitor>(dispatcher,
-                                                                              files);
+                                                                              parameters);
 
       expect(json_file_monitor->attached());
 

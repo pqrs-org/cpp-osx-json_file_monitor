@@ -9,10 +9,14 @@ int main() {
   system("mkdir -p tmp");
   system("echo '{}' > tmp/example.json");
 
-  std::vector<std::string> files{"tmp/example.json"};
+  pqrs::osx::file_monitor::parameters parameters{
+      .files = {
+          "tmp/example.json",
+      },
+  };
 
   auto json_file_monitor = std::make_shared<pqrs::osx::json_file_monitor>(dispatcher,
-                                                                          files);
+                                                                          parameters);
 
   json_file_monitor->json_file_changed.connect([](auto&& changed_file_path, auto&& json) {
     if (json) {
