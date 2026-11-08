@@ -12,5 +12,6 @@ include("${CMAKE_CURRENT_LIST_DIR}/cpm-cmake-package-lock/cmake/common.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/cpm-cmake-package-lock/cmake/dependency.cmake")
 
 copy_vendor_package(pqrs_json)
+copy_vendor_package(pqrs_osx_autorelease_pool)
 copy_vendor_package(pqrs_osx_file_monitor)
 copy_vendor_package(ut)
